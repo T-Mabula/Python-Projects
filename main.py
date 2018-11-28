@@ -1,9 +1,6 @@
 class GridCoordinate:
     """Class that models a two-dimensional coordinate"""
 
-    __x: int = 0
-    __y: int = 0
-
     def __init__(self, xpos, ypos):
         """
         Constructor for Coordinate Class
@@ -39,6 +36,5 @@ class GridCoordinate:
 
     def __repr__(self):
         return "Coordinate(%d, %d)" % (self.x, self.y)
-
 
 
