@@ -1,2 +1,2 @@
-# Python-Projects
-Small projects coded in Python
+# Tic-Tac-Toe
+A version of the Tic-Tac-Toe game coded in Python
