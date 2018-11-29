@@ -145,6 +145,63 @@ class Board:
         """
         return int(self.__board[pos.x][pos.y].value())
 
-test = Board()
-test.markWithCross(GridCoordinate(1, 2))
-print(test.isFull())
+
+class Player:
+    """Class that manages the logic component of each player"""
+    def __init__(self):
+        """Default constructor"""
+        self.__name: str = ''
+        self.__won: bool = False
+        self.__symbol: Cell.Mark.Symbol = Cell.Mark.CROSS
+
+    @property
+    def name(self) -> str:
+        """
+        Returns the name of the player
+
+        :return: Name of player
+        :rtype: str
+        """
+
+        return self.__name
+
+    @name.setter
+    def name(self, playerName: str) -> None:
+        """
+        Sets the name of the player
+
+        :param playerName: Name of the player
+        :return: None
+        """
+        self.__name = playerName
+
+    @property
+    def won(self) -> bool:
+        """
+        Returns whether the player has won or not
+
+        :return: Boolean indicating whether the player has won or not
+        :rtype: bool
+        """
+        return self.__won
+
+    @won.setter
+    def won(self, winStatus: bool) -> None:
+        """
+        Sets the player to win or lose
+
+        :param winStatus: Boolean inidicating whether the player has won or not
+        :return: None
+        """
+        self.__won = winStatus
+
+    @property
+    def symbol(self) -> Cell.Mark:
+        """
+        Returns the mark symbol of the player on the board (i.e. whether the player marks the board with a cross or nought)
+
+        :return: Cell.Mark indicating the mark that the player makes on the board
+        :rtype: Cell.Mark
+        """
+        return self.__symbol
+
