@@ -90,8 +90,11 @@ class Cell:
         return int(self.__val)
 
 class Board:
+    """Class that models a 3X3 board"""
     __BOARD_SIZE = 3
+
     def __init__(self):
+        """Default constructor"""
         self.__numOfFilledCells: int = 0
         # Create a list of Cells to make up the board
         self.__board: List[List[Cell]] = []
@@ -103,20 +106,43 @@ class Board:
             self.__board.append(newRow)
 
     def markWithCross(self, pos: GridCoordinate) -> None:
+        """
+        Marks a specified position on the board with a cross
+
+        :param pos: GridCoordinate of cell to be marked with a cross
+        :return: None
+        """
         if (self.__board[pos.x][pos.y].value() == Cell.Mark.EMPTY):
             self.__board[pos.x][pos.y].markWithCross()
             self.__numOfFilledCells += 1
 
 
     def markWithNought(self, pos: GridCoordinate) -> None:
+        """
+        Marks a specified position on the board with a nought
+
+        :param pos: GridCoordinate of cell to be marked with a nought
+        :return: None
+        """
         if (self.__board[pos.x][pos.y].value() == Cell.Mark.EMPTY):
             self.__board[pos.x][pos.y].markWithNought()
             self.__numOfFilledCells += 1
 
     def isFull(self) -> bool:
+        """
+        Indicates whether the playing board is full or not
+
+        :return: Boolean value indicating whether playing board is full or not
+        """
         return self.__numOfFilledCells == pow(Board.__BOARD_SIZE, 2)
 
     def value(self, pos: GridCoordinate) -> int:
+        """
+        Returns a numeric value corresponding to the contents of the specified cell
+
+        :param pos: GridCoordinate of cell
+        :return: Integer value representing contents of cell
+        """
         return int(self.__board[pos.x][pos.y].value())
 
 test = Board()
