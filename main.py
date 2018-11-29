@@ -14,7 +14,7 @@ class GridCoordinate:
             self.__y = ypos
 
     @property
-    def x(self):
+    def x(self) -> int:
         """
         Return the X-component of the coordinate
 
@@ -24,7 +24,7 @@ class GridCoordinate:
         return self.__x
 
     @property
-    def y(self):
+    def y(self) -> int:
         """
         Return the Y-component of the coordinate
 
@@ -49,18 +49,20 @@ class GridCoordinate:
 class Cell:
     """Class that models the a cell in  grid"""
 
-    __EMPTY_CELL_VAL = 0
-    __CROSS_VAL = 1
-    __NOUGHT_VAL = -1
+    from enum import Enum
+    class Mark(Enum):
+        NOUGHT = -1
+        EMPTY = 0
+        CROSS = 1
 
     def __init__(self):
         """Default constructor"""
-        self.__val = self.__EMPTY_CELL_VAL
+        self.__val = Cell.Mark.NOUGHT
 
     def __str__(self):
-        if self.__val == self.__NOUGHT_VAL:
+        if self.__val == Cell.Mark.NOUGHT:
             return 'O'
-        elif self.__val == self.__CROSS_VAL:
+        elif self.__val == Cell.Mark.CROSS:
             return 'X'
         else:
             return ' '
@@ -68,16 +70,16 @@ class Cell:
     def __repr__(self):
         return "Cell()"
 
-    def markWithCross(self):
+    def markWithCross(self) -> None:
         """Marks the cell with a cross"""
-        self.__val = self.__CROSS_VAL
+        self.__val = Cell.Mark.CROSS
 
-    def markWithNought(self):
+    def markWithNought(self) -> None:
         """Marks the cell with a nought"""
-        self.__val = self.__NOUGHT_VAL
+        self.__val = Cell.Mark.NOUGHT
 
     @property
-    def value(self):
+    def value(self) -> int:
         """Returns the numeric value of the cell
 
         return: Numeric value of the mark in the cell
@@ -85,3 +87,7 @@ class Cell:
         """
         return int(self.__val)
 
+
+test = Cell()
+test.markWithCross()
+print(test)
