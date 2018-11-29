@@ -52,15 +52,15 @@ class GridCoordinate:
 class Cell:
     """Class that models the a cell in  grid"""
 
-    from enum import Enum
-    class Mark(Enum):
+    from enum import IntEnum
+    class Mark(IntEnum):
         NOUGHT = -1
         EMPTY = 0
         CROSS = 1
 
     def __init__(self):
         """Default constructor"""
-        self.__val: int = Cell.Mark.NOUGHT
+        self.__val: Cell.Mark = Cell.Mark.EMPTY
 
     def __str__(self):
         if self.__val == Cell.Mark.NOUGHT:
@@ -81,7 +81,6 @@ class Cell:
         """Marks the cell with a nought"""
         self.__val = Cell.Mark.NOUGHT
 
-    @property
     def value(self) -> int:
         """Returns the numeric value of the cell
 
@@ -90,63 +89,36 @@ class Cell:
         """
         return int(self.__val)
 
-
 class Board:
-    """Class that models a 3X3 playing board"""
-    __SIZE_OF_BOARD = 3
-
-    def __int__(self):
-        self.__positionsFilled: int = 0
-        # Generate a list of cells to generate a board
+    __BOARD_SIZE = 3
+    def __init__(self):
+        self.__numOfFilledCells: int = 0
+        # Create a list of Cells to make up the board
         self.__board: List[List[Cell]] = []
-        """
-        for row in range(0, Board.__SIZE_OF_BOARD):
-            rowList: List[Cell] = []
-            for column in range(0, Board.__SIZE_OF_BOARD):
+        for row in range(0, Board.__BOARD_SIZE):
+            newRow = []
+            for column in range(0, Board.__BOARD_SIZE):
                 newCell = Cell()
-                rowList.append(newCell)
-            self.__board.append(rowList)
-        """
+                newRow.append(newCell)
+            self.__board.append(newRow)
 
-    def markWithCross(self, position: GridCoordinate) -> None:
-        """
-        Marks a specified cell in the board with a cross
+    def markWithCross(self, pos: GridCoordinate) -> None:
+        if (self.__board[pos.x][pos.y].value() == Cell.Mark.EMPTY):
+            self.__board[pos.x][pos.y].markWithCross()
+            self.__numOfFilledCells += 1
 
-        param: GridCoordinate position: The coordinate of the cell to be marked
-        rtype: None
-        """
-        if (self.__board[position.x()][position.y()].value() == Cell.Mark.EMPTY):
-            self.__board[position.x][position.y].markWithCross()
-            self.__positionsFilled += 1
 
-    def markWithNought(self, position: GridCoordinate) -> None:
-        """
-        Marks a specified cell in the board with a nought
-
-        param: GridCoordinate position: The coordinate of the cell to be marked
-        rtype: None
-        """
-        if (self.__board[position.x()][position.y()].value() == Cell.Mark.EMPTY):
-            self.__board[position.x][position.y].markWithNought()
-            self.__positionsFilled +=1
-
-    def value(self, position: GridCoordinate) -> int:
-        """
-        Returns the numeric value of a specified cell in the board
-
-         param: GridCoordinate position: The coordinate of the cell to be marked
-         rtype: int
-         """
-        return int(self.__board[position.x()][position.y()].value())
+    def markWithNought(self, pos: GridCoordinate) -> None:
+        if (self.__board[pos.x][pos.y].value() == Cell.Mark.EMPTY):
+            self.__board[pos.x][pos.y].markWithNought()
+            self.__numOfFilledCells += 1
 
     def isFull(self) -> bool:
-        """
-        Returns boolean indicating whether the board is full or not
+        return self.__numOfFilledCells == pow(Board.__BOARD_SIZE, 2)
 
-        rtype: bool
-        """
-        return bool(self.__positionsFilled == pow(Board.__SIZE_OF_BOARD, 2))
-
+    def value(self, pos: GridCoordinate) -> int:
+        return int(self.__board[pos.x][pos.y].value())
 
 test = Board()
+test.markWithCross(GridCoordinate(1, 2))
 print(test.isFull())
