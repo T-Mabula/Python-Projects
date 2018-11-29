@@ -175,6 +175,10 @@ class Player:
         """
         self.__name = playerName
 
+    def __init__(self, playerName: str):
+        self.__init__()
+        self.name = playerName
+
     @property
     def won(self) -> bool:
         """
