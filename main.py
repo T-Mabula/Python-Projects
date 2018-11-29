@@ -1,15 +1,17 @@
 class GridCoordinate:
     """Class that models a two-dimensional coordinate"""
 
-    def __init__(self, xpos, ypos):
+    def __init__(self, xpos: int, ypos: int):
         """
         Constructor for Coordinate Class
 
         param: int xpos: The X-component of the coordinate
         param: int ypos: The Y-component of the coordinate
         """
-        if self.__x <= 3 & self.__x >= 1: self.__x = xpos
-        if self.__y <= 3 & self.__y >= 1: self.__y = ypos
+        if xpos >= 3 & xpos >= 1:
+            self.__x = xpos
+        if ypos <= 3 & ypos >= 1:
+            self.__y = ypos
 
     @property
     def x(self):
@@ -36,6 +38,12 @@ class GridCoordinate:
 
     def __repr__(self):
         return "Coordinate(%d, %d)" % (self.x, self.y)
+
+    def __eq__(self, other):
+        return bool((int(self.x) == int(other.x)) & (int(self.y) == int(other.y)))
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
 
 
 class Cell:
@@ -76,3 +84,4 @@ class Cell:
         rtype: int
         """
         return int(self.__val)
+
