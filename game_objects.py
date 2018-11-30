@@ -13,10 +13,8 @@ class GridCoordinate:
         :param: int xpos: The X-component of the coordinate
         :param: int ypos: The Y-component of the coordinate
         """
-        if xpos >= 3 & xpos >= 1:
-            self.__x = xpos
-        if ypos <= 3 & ypos >= 1:
-            self.__y = ypos
+        self.__x = xpos
+        self.__y = ypos
 
     @property
     def x(self) -> int:
@@ -75,13 +73,13 @@ class Cell:
     def __repr__(self):
         return "Cell()"
 
-    def markWithCross(self) -> None:
-        """Marks the cell with a cross"""
-        self.__val = Cell.Mark.CROSS
+    def mark(self, symbol: Mark) -> None:
+        """Marks the cell with a cross
 
-    def markWithNought(self) -> None:
-        """Marks the cell with a nought"""
-        self.__val = Cell.Mark.NOUGHT
+        :param symbol: The symbol to be marked on the cell
+        """
+        self.__val = symbol
+
 
     def value(self) -> int:
         """Returns the numeric value of the cell
@@ -90,6 +88,17 @@ class Cell:
         rtype: int
         """
         return int(self.__val)
+
+class CoordinateOutOfRange(Exception):
+    """Exception for coordinates out of the board's limits"""
+    def __init___(self):
+        self.__msg = 'Grid coordinate out of board range'
+        super(CoordinateOutOfRange).__init__(self.__msg)
+
+class OccupiedCell(Exception):
+    def __init__(self):
+        self.__msg = 'Attempt to overwrite occupied cell on board'
+        super(OccupiedCell, self).__init__(self.__msg)
 
 class Board:
     """Class that models a 3X3 board"""
@@ -116,28 +125,22 @@ class Board:
         """
         return int(Board.__BOARD_SIZE)
 
-    def markWithCross(self, pos: GridCoordinate) -> None:
-        """
-        Marks a specified position on the board with a cross
 
-        :param pos: GridCoordinate of cell to be marked with a cross
-        :return: None
-        """
-        if (self.__board[pos.x - 1][pos.y - 1].value() == Cell.Mark.EMPTY):
-            self.__board[pos.x - 1][pos.y - 1].markWithCross()
-            self.__numOfFilledCells += 1
-
-
-    def markWithNought(self, pos: GridCoordinate) -> None:
+    def markBoard(self, symbol: Cell.Mark, pos: GridCoordinate) -> None:
         """
         Marks a specified position on the board with a nought
 
+        :param symbol: The symbol to be marked on the board
         :param pos: GridCoordinate of cell to be marked with a nought
         :return: None
         """
+        if pos.x < 1 or pos.x > Board.__BOARD_SIZE or pos.y < 1 or pos.y > Board.__BOARD_SIZE:
+            raise CoordinateOutOfRange
         if (self.__board[pos.x - 1][pos.y - 1].value() == Cell.Mark.EMPTY):
-            self.__board[pos.x - 1][pos.y - 1].markWithNought()
+            self.__board[pos.x - 1][pos.y - 1].mark(symbol)
             self.__numOfFilledCells += 1
+        else:
+            raise OccupiedCell
 
     def isFull(self) -> bool:
         """
@@ -324,11 +327,3 @@ class BoardScanner:
         return self.__scanBoard(player.symbol, board)
 
 
-test = Board()
-test.markWithCross(GridCoordinate(1, 1))
-test.markWithCross(GridCoordinate(2, 2))
-test.markWithCross(GridCoordinate(3, 3))
-scanner = BoardScanner()
-me = Player()
-me.symbol = Cell.Mark.CROSS
-print(scanner.hasPlayerWon(me, test))
