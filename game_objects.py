@@ -3,13 +3,15 @@ from typing import List
 
 class GridCoordinate:
     """Class that models a two-dimensional coordinate"""
+    __y: int
+    __x: int
 
     def __init__(self, xpos: int, ypos: int):
         """
         Constructor for Coordinate Class
 
-        param: int xpos: The X-component of the coordinate
-        param: int ypos: The Y-component of the coordinate
+        :param: int xpos: The X-component of the coordinate
+        :param: int ypos: The Y-component of the coordinate
         """
         if xpos >= 3 & xpos >= 1:
             self.__x = xpos
@@ -24,7 +26,7 @@ class GridCoordinate:
         return: The X-component of the coordinate
         rtype: int
         """
-        return self.__x
+        return int(self.__x)
 
     @property
     def y(self) -> int:
@@ -34,7 +36,7 @@ class GridCoordinate:
         return: The Y-component of the coordinate
         rtype: int
         """
-        return self.__y
+        return int(self.__y)
 
     def __str__(self):
         return "%d%2d" % (self.x, self.y)
@@ -105,6 +107,15 @@ class Board:
                 newRow.append(newCell)
             self.__board.append(newRow)
 
+    @property
+    def size(self)-> int:
+        """
+        Returns the length/width of the square board
+
+        :return: Integer indicating the length/width of the square board
+        """
+        return int(Board.__BOARD_SIZE)
+
     def markWithCross(self, pos: GridCoordinate) -> None:
         """
         Marks a specified position on the board with a cross
@@ -112,8 +123,8 @@ class Board:
         :param pos: GridCoordinate of cell to be marked with a cross
         :return: None
         """
-        if (self.__board[pos.x][pos.y].value() == Cell.Mark.EMPTY):
-            self.__board[pos.x][pos.y].markWithCross()
+        if (self.__board[pos.x - 1][pos.y - 1].value() == Cell.Mark.EMPTY):
+            self.__board[pos.x - 1][pos.y - 1].markWithCross()
             self.__numOfFilledCells += 1
 
 
@@ -124,8 +135,8 @@ class Board:
         :param pos: GridCoordinate of cell to be marked with a nought
         :return: None
         """
-        if (self.__board[pos.x][pos.y].value() == Cell.Mark.EMPTY):
-            self.__board[pos.x][pos.y].markWithNought()
+        if (self.__board[pos.x - 1][pos.y - 1].value() == Cell.Mark.EMPTY):
+            self.__board[pos.x - 1][pos.y - 1].markWithNought()
             self.__numOfFilledCells += 1
 
     def isFull(self) -> bool:
@@ -143,7 +154,7 @@ class Board:
         :param pos: GridCoordinate of cell
         :return: Integer value representing contents of cell
         """
-        return int(self.__board[pos.x][pos.y].value())
+        return int(self.__board[pos.x - 1][pos.y - 1].value())
 
 
 class Player:
@@ -175,10 +186,6 @@ class Player:
         """
         self.__name = playerName
 
-    def __init__(self, playerName: str):
-        self.__init__()
-        self.name = playerName
-
     @property
     def won(self) -> bool:
         """
@@ -209,3 +216,119 @@ class Player:
         """
         return self.__symbol
 
+    @symbol.setter
+    def symbol(self, symbol: Cell.Mark) -> None:
+        """
+        Sets the mark symbol of the player on the board (i.e. whether the player marks the board with a cross or nought)
+
+        :param: symbol: The mark that the player will put on the game board
+        :rtype: None
+        """
+        self.__symbol = symbol
+
+class BoardScanner:
+    """Class that scans the game board and tallies the markings on the board"""
+
+    def __threeInARow(self, symbol: Cell.Mark, total: int)-> bool:
+        '''
+        Check if a given row, column or diagonal total corresponds to a given symbol occuring three times consecutively
+
+        :param: symbol: The symbol to be checked
+        :total: total: The row, column or diagonal total on the board
+        :return: Boolean indicating whether the given symbol has occured thrice
+        :rtype: bool
+        '''
+
+        return 3 * int(symbol) == total
+
+
+    def __scanRows(self, symbol: Cell.Mark, board: Board)-> bool:
+        """
+        Scans the rows of the board and returns whether a given mark has been seen three consecutive times
+
+        :param: symbol: The symbol to be checked for any occurances on the board three times in a row
+        :param: board: The game board
+        """
+        for row in range(1, board.size + 1):
+            sum = 0
+            for column in range(1, board.size + 1):
+                sum += board.value(GridCoordinate(row, column))
+            if self.__threeInARow(symbol, sum):
+                return True
+
+        return False
+
+    def __scanColumns(self, symbol: Cell.Mark, board: Board)-> bool:
+        """
+        Scans the columns of the board and returns whether a given mark has been seen three consecutive times
+
+        :param: symbol: The symbol to be checked for any occurances on the board three times in a column
+        :param: board: The game board
+        """
+        for column in range(1, board.size + 1):
+            sum = 0
+            for row in range(1, board.size + 1):
+                sum += board.value(GridCoordinate(row, column))
+            if self.__threeInARow(symbol, sum):
+                return True
+
+        return False
+
+    def __scanDiagonals(self, symbol: Cell.Mark, board: Board)-> bool:
+        """
+        Scans the columns of the board and returns whether a given mark has been seen three consecutive times
+
+        :param: symbol: The symbol to be checked for any occurances on the board three times in a column
+        :param: board: The game board
+        """
+        # Check the diagonal from the top left corner to the bottom right
+        sum = 0
+        for row in range(1, board.size + 1):
+            column = row
+            sum += board.value(GridCoordinate(row, column))
+
+        if self.__threeInARow(symbol, sum):
+            return True
+
+        return False
+
+        # Check the diagonal from the top right corner to the bottom left
+        sum = 0
+        for column in range(1, board.size + 1):
+            row = board.size - column + 1
+            sum += board.value(GridCoordinate(row, column))
+
+        if self.__threeInARow(symbol, sum):
+            return True
+
+        return False
+
+    def __scanBoard(self, symbol: Cell.Mark, board: Board) -> bool:
+        """
+        Scans the board and returns whether a given mark has been seen three consecutive times
+
+        :param: symbol: The symbol to be checked for any occurances on the board three consecutive times
+        :param: board: The game board
+        """
+        return self.__scanRows(symbol, board) or self.__scanColumns(symbol, board) or self.__scanDiagonals(symbol, board)
+
+    def hasPlayerWon(self, player: Player, board: Board)-> bool:
+        """"
+        Scans the board and return whether a given player has won
+
+        :param player: The player whose marking will be checked to see if it won on the gameBoard
+        :param board: The current gameplay board
+        :return: Returns whether the player has won or not
+        """
+
+        return self.__scanBoard(player.symbol, board)
+
+
+test = Board()
+test.markWithCross(GridCoordinate(1, 1))
+test.markWithCross(GridCoordinate(2, 2))
+test.markWithCross(GridCoordinate(3, 3))
+scanner = BoardScanner()
+me = Player()
+me.symbol = Cell.Mark.CROSS
+print(scanner.hasPlayerWon(me, test))
